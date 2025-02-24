@@ -3,6 +3,7 @@ import { Image, SafeAreaView, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { theme } from "~/theme";
 import SearchBar from "../components/SearchBar";
+import CurrentWeather from "~/components/CurrentWeather";
 
 const HomeScreen: React.FC = () => {
   const [showsearch, setShowSearch] = useState<boolean>(false);
@@ -17,6 +18,8 @@ const HomeScreen: React.FC = () => {
       />
       <SafeAreaView className="flex-1 flex pt-24">
         <SearchBar showsearch={showsearch} setShowSearch={setShowSearch} />
+        <CurrentWeather/>
+      
       </SafeAreaView>
     </View>
   );
