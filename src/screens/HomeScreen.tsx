@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Image, SafeAreaView, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { theme } from "~/theme";
 import SearchBar from "../components/SearchBar";
 import CurrentWeather from "~/components/CurrentWeather";
+import { CalendarDaysIcon } from "react-native-heroicons/outline";
+import ForecastCard from "~/components/ForecastCard";
 
 const HomeScreen: React.FC = () => {
   const [showsearch, setShowSearch] = useState<boolean>(false);
@@ -18,8 +20,20 @@ const HomeScreen: React.FC = () => {
       />
       <SafeAreaView className="flex-1 flex pt-24">
         <SearchBar showsearch={showsearch} setShowSearch={setShowSearch} />
-        <CurrentWeather/>
-      
+        <CurrentWeather />
+        <View className="mb-5 space-y-3">
+          <View className="flex-row items-center mx-5 space-x-2 mb-2">
+            <CalendarDaysIcon size={20} color={"white"} />
+            <Text className="text-white text-base"> 5 day forecast</Text>
+          </View>
+            <ScrollView
+              horizontal
+              contentContainerStyle={{ paddingHorizontal: 15 }}
+              showsHorizontalScrollIndicator={false}
+            >
+              <ForecastCard />
+            </ScrollView>
+          </View>
       </SafeAreaView>
     </View>
   );
