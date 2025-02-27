@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Animated,
+} from "react-native";
+import { MagnifyingGlassIcon, XMarkIcon } from "react-native-heroicons/outline";
 import { MapPinIcon } from "react-native-heroicons/solid";
 import { theme } from "~/theme";
 import axios from "axios";
+import { weatherStore } from "~/stores/WeatherStore";
 
 interface SearchBarProps {
   showSearch: boolean;
@@ -11,10 +19,31 @@ interface SearchBarProps {
   onLocationSelect: (location: { name: string; lat: number; lon: number }) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ showSearch, setShowSearch, onLocationSelect }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  showSearch,
+  setShowSearch,
+  onLocationSelect,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [locations, setLocations] = useState<{ name: string; lat: number; lon: number }[]>([]);
+  const [locations, setLocations] = useState<
+    { name: string; country: string; lat: number; lon: number }[]
+  >([]);
   const [loading, setLoading] = useState(false);
+  const [animation] = useState(new Animated.Value(0)); // For smooth transition
+
+  // Smooth transition when search bar expands
+  React.useEffect(() => {
+    Animated.timing(animation, {
+      toValue: showSearch ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [showSearch]);
+
+  const searchBarWidth = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["15%", "100%"],
+  });
 
   // Fetch locations based on search query
   const fetchLocations = async (query: string) => {
@@ -27,7 +56,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ showSearch, setShowSearch, onLoca
       const response = await axios.get(
         `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=15f231a4c5493607e6ad5070b5c388da`
       );
-      setLocations(response.data.map((loc: any) => ({ name: loc.name, lat: loc.lat, lon: loc.lon })));
+      setLocations(
+        response.data.map((loc: any) => ({
+          name: loc.name,
+          country: loc.country,
+          lat: loc.lat,
+          lon: loc.lon,
+        }))
+      );
     } catch (error) {
       console.error("Error fetching locations:", error);
     } finally {
@@ -36,59 +72,83 @@ const SearchBar: React.FC<SearchBarProps> = ({ showSearch, setShowSearch, onLoca
   };
 
   // Handle location selection
-  const handleLocationPress = (location: { name: string; lat: number; lon: number }) => {
+  const handleLocationPress = (location: {
+    name: string;
+    country: string;
+    lat: number;
+    lon: number;
+  }) => {
     onLocationSelect(location);
     setShowSearch(false);
     setSearchQuery("");
     setLocations([]);
   };
 
+  // Clear search query
+  const clearSearch = () => {
+    setSearchQuery("");
+    setLocations([]);
+  };
+
   return (
     <View className="mx-4 relative z-50">
-      <View
+      <Animated.View
         className="flex-row items-center justify-end rounded-full overflow-hidden"
         style={{
+          width: searchBarWidth,
           backgroundColor: showSearch ? theme.bgWhite(0.3) : "transparent",
         }}
       >
-        {showSearch ? (
+        {showSearch && (
           <TextInput
             placeholder="Find a city"
             placeholderTextColor={"lightgray"}
-            className="pl-6 h-15 text-white flex-1 text-base"
+            className="pl-6 h-12 text-white flex-1 text-base"
             value={searchQuery}
             onChangeText={(text) => {
               setSearchQuery(text);
               fetchLocations(text);
             }}
           />
-        ) : null}
+        )}
 
         <TouchableOpacity
-          style={{ backgroundColor: theme.bgWhite(0.2) }}
           className="rounded-full p-3 m-1"
-          onPress={() => setShowSearch(!showSearch)}
+          style={{ backgroundColor: theme.bgWhite(0.2) }}
+          onPress={() => {
+            setShowSearch(!showSearch);
+            if (showSearch) {
+              clearSearch();
+            }
+          }}
         >
-          <MagnifyingGlassIcon size={28} color={"white"} />
+          {showSearch ? (
+            <XMarkIcon size={28} color={"white"} />
+          ) : (
+            <MagnifyingGlassIcon size={28} color={"white"} />
+          )}
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
       {showSearch && (
-        <View className="absolute w-full bg-gray-300 top-16 z-50 rounded-3xl">
+        <View className="absolute w-full bg-gray-300 top-16 rounded-3xl shadow-lg">
           {loading ? (
             <ActivityIndicator size="small" color="black" className="p-3" />
           ) : locations.length > 0 ? (
             locations.map((location, index) => {
               const showBorder = index + 1 !== locations.length;
-              const borderClass = showBorder ? "border-b-2 border-b-gray-400" : "";
               return (
                 <TouchableOpacity
                   key={index}
-                  className={"flex-row items-center px-4 p-3 mb-1 " + borderClass}
+                  className={`flex-row items-center px-4 py-3 ${
+                    showBorder ? "border-b-2 border-b-gray-400" : ""
+                  }`}
                   onPress={() => handleLocationPress(location)}
                 >
                   <MapPinIcon size={20} color={"red"} />
-                  <Text className="text-black ml-2 text-lg">{location.name}</Text>
+                  <Text className="text-black ml-2 text-lg">
+                    {location.name}, {location.country}
+                  </Text>
                 </TouchableOpacity>
               );
             })

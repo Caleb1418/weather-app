@@ -29,17 +29,13 @@ export const fetchWeatherForecast = async (latitude: number, longitude: number) 
     });
     return response.data;
   };
-  // export const reverseGeocode = async (latitude: number, longitude: number) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=15f231a4c5493607e6ad5070b5c388da`
-  //     );
-  //     console.log("Reverse geocoding response:", response.data); // Log response
-  //     if (response.data && response.data.length > 0) {
-  //       return { latitude, longitude }; // Return the coordinates
-  //     }
-  //   } catch (error) {
-  //     console.log("Reverse geocoding error:", error); // Log error
-  //   }
-  //   return null;
-  // };
+ // Fetch 3-hour forecast data (for the next 24 hours)
+export const fetchHourlyWeather = async (latitude: number, longitude: number) => {
+  const response = await apiClient.get("/forecast", {
+    params: {
+      lat: latitude,
+      lon: longitude,
+    },
+  });
+  return response.data.list.slice(0, 8); // Return the next 24 hours (8 x 3-hour intervals)
+};
