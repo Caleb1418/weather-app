@@ -25,6 +25,8 @@ const ForecastCard: React.FC = observer(() => {
       horizontal
       data={dailyForecasts}
       keyExtractor={(item) => item.dt.toString()}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => (
         <View
           className="flex justify-center items-center w-28 rounded-3xl py-3 space-y-1 mr-4"

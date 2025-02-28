@@ -1,10 +1,29 @@
 module.exports = function (api) {
-  api.cache(true);
-  const plugins = [];
+  api.cache(true); // Enable Babel caching for better performance
 
   return {
-    presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
+    // Presets
+    presets: [
+      [
+        "babel-preset-expo",
+        {
+          jsxImportSource: "nativewind", // Enable NativeWind for JSX
+        },
+      ],
+      "nativewind/babel", // Include NativeWind preset
+    ],
 
-    plugins,
+    // Plugins
+    plugins: [
+      [
+        "module:react-native-dotenv", // Load environment variables from .env
+        {
+          moduleName: "@env", // Import environment variables using `@env`
+          path: ".env", // Path to your .env file
+          safe: false, // Set to true to fail on missing variables
+          allowUndefined: true, // Allow undefined variables
+        },
+      ],
+    ],
   };
 };

@@ -7,6 +7,7 @@ import SearchBar from "~/components/SearchBar";
 import WeatherCard from "~/components/WeatherCard";
 import { weatherStore } from "~/stores/WeatherStore";
 import { observer } from "mobx-react-lite";
+import { API_KEY } from "@env";
 
 const LocationScreen: React.FC = observer(() => {
   const navigation = useNavigation();
@@ -21,7 +22,7 @@ const LocationScreen: React.FC = observer(() => {
         // Request location permissions
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          console.log("Location permission denied");
+          alert("Location permission denied. Please enable location services to use this feature.");
           return;
         }
 
@@ -31,7 +32,7 @@ const LocationScreen: React.FC = observer(() => {
 
         // Fetch weather for current location
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=15f231a4c5493607e6ad5070b5c388da`
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`
         );
         const data = await response.json();
         setCurrentLocationWeather(data); // Set current location weather
@@ -56,7 +57,6 @@ const LocationScreen: React.FC = observer(() => {
     }
   }, [weatherStore.initialized]);
 
-  console.log("Rendering LocationScreen, Favorites:", weatherStore.favorites);
 
   // Handle location selection
   const handleLocationSelect = (location: { name: string; lat: number; lon: number }) => {
@@ -73,7 +73,7 @@ const LocationScreen: React.FC = observer(() => {
   }
 
   return (
-    <ScrollView className="flex-1 p-4 bg-blue-900">
+    <ScrollView className="flex-1 p-4 bg-blue-900 pt-20">
       <SearchBar showSearch={showSearch} setShowSearch={setShowSearch} onLocationSelect={handleLocationSelect} />
 
       {/* Display current location weather */}

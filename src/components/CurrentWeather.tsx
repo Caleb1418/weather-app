@@ -3,24 +3,15 @@ import { Image, Text, View, ActivityIndicator, TouchableOpacity } from "react-na
 import { SunIcon, ArrowsRightLeftIcon, HeartIcon } from "react-native-heroicons/outline";
 import { observer } from "mobx-react-lite";
 import { weatherStore } from "~/stores/WeatherStore";
+import { formatTime } from "~/utils";
 
 const CurrentWeather: React.FC = observer(() => {
   const { currentWeather, loading, error, unit, convertedTemperature, initialized } = weatherStore;
 
-  // Format time helper
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+ 
 
   // Handle favorite toggle
   const handleFavoriteToggle = () => {
-    if (!currentWeather || !currentWeather.name) {
-      console.log("Cannot toggle favorite: currentWeather is missing data");
-      return;
-    }
-    
-    console.log("Toggling Favorite for:", currentWeather.name);
     
     if (weatherStore.isFavorite(currentWeather.name)) {
       weatherStore.removeFavorite(currentWeather.name);
@@ -48,13 +39,11 @@ const CurrentWeather: React.FC = observer(() => {
   if (error) return <Text className="text-white">Error: {error}</Text>;
 
   // Check if data is defined and has the expected structure
-  if (!currentWeather || !currentWeather.name || !currentWeather.weather?.[0] || !currentWeather.main || !currentWeather.sys) {
+  if (currentWeather === null) {
     return <Text className="text-white">No weather data available</Text>;
   }
-
   // Check if the current location is favorited
   const isFavorited = weatherStore.isFavorite(currentWeather.name);
-  console.log(`Current location ${currentWeather.name} is favorited: ${isFavorited}`);
 
   return (
     <View className="mx-4 flex justify-around flex-1 mb-1">

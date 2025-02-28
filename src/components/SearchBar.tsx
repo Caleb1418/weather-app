@@ -11,13 +11,8 @@ import { MagnifyingGlassIcon, XMarkIcon } from "react-native-heroicons/outline";
 import { MapPinIcon } from "react-native-heroicons/solid";
 import { theme } from "~/theme";
 import axios from "axios";
-import { weatherStore } from "~/stores/WeatherStore";
-
-interface SearchBarProps {
-  showSearch: boolean;
-  setShowSearch: (show: boolean) => void;
-  onLocationSelect: (location: { name: string; lat: number; lon: number }) => void;
-}
+import { SearchBarProps } from "~/types/module";
+import { API_KEY } from "@env";
 
 const SearchBar: React.FC<SearchBarProps> = ({
   showSearch,
@@ -29,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     { name: string; country: string; lat: number; lon: number }[]
   >([]);
   const [loading, setLoading] = useState(false);
-  const [animation] = useState(new Animated.Value(0)); // For smooth transition
+  const [animation] = useState(new Animated.Value(0)); 
 
   // Smooth transition when search bar expands
   React.useEffect(() => {
@@ -54,7 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=15f231a4c5493607e6ad5070b5c388da`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
       );
       setLocations(
         response.data.map((loc: any) => ({

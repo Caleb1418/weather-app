@@ -1,14 +1,8 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { WeatherCardProps } from "~/types/module";
 
-interface WeatherCardProps {
-  location: string;
-  time: string;
-  highTemp: number;
-  lowTemp: number;
-  icon: string;
-  onPress?: () => void;
-}
+
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ location, time, highTemp, lowTemp, icon, onPress }) => {
   return (

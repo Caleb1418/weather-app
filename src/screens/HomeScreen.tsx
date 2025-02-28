@@ -1,15 +1,14 @@
 import React from "react";
-import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, SafeAreaView, Text, View, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "@react-navigation/native";
+import { ArrowLeftIcon, CalendarDaysIcon } from "react-native-heroicons/outline";
 import CurrentWeather from "~/components/CurrentWeather";
-import { CalendarDaysIcon } from "react-native-heroicons/outline";
 import ForecastCard from "~/components/ForecastCard";
-import HourlyWeather from "~/components/HourlyWeather"; // Import the HourlyWeather component
+import HourlyWeather from "~/components/HourlyWeather";
 
 const HomeScreen: React.FC = () => {
-  // Example latitude and longitude (replace with dynamic values if needed)
-  const latitude = 37.7749; // Example latitude (San Francisco)
-  const longitude = -122.4194; // Example longitude (San Francisco)
+  const navigation = useNavigation();
 
   return (
     <View className="flex-1 relative">
@@ -20,10 +19,18 @@ const HomeScreen: React.FC = () => {
         className="absolute h-full w-full"
       />
       <SafeAreaView className="flex-1 flex pt-24">
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Location" as never)}
+          className="absolute top-20 left-4 z-50 bg-white/20 p-2 rounded-full"
+        >
+          <ArrowLeftIcon size={24} color="white" />
+        </TouchableOpacity>
+
         <CurrentWeather />
 
-        {/* Add HourlyWeather component here */}
-        <HourlyWeather latitude={latitude} longitude={longitude} />
+        {/* Hourly Weather Section */}
+        <HourlyWeather />
 
         {/* 5-Day Forecast Section */}
         <View className="mb-5 space-y-3">
@@ -31,13 +38,8 @@ const HomeScreen: React.FC = () => {
             <CalendarDaysIcon size={20} color={"white"} />
             <Text className="text-white text-base">5 day forecast</Text>
           </View>
-          <ScrollView
-            horizontal
-            contentContainerStyle={{ paddingHorizontal: 15 }}
-            showsHorizontalScrollIndicator={false}
-          >
-            <ForecastCard />
-          </ScrollView>
+          {/* Remove the ScrollView and directly use ForecastCard */}
+          <ForecastCard />
         </View>
       </SafeAreaView>
     </View>

@@ -35,8 +35,10 @@ cd weather-app
 ```bash
 npm install
 ```
+3. **Add .env**:
+* create a .env file and copy the .env.example 
 
-3. **Run the App**:
+4. **Run the App**:
    * Start the development server:
 ```bash
 expo start
@@ -67,7 +69,5 @@ expo start
 * **Expo**: For making React Native development easier.
 * **React Native Community**: For their amazing libraries and tools.
 
-## Support
-If you encounter any issues or have questions, feel free to open an issue on GitHub or contact me at your-email@example.com.
 
 Enjoy the app! ☀️🌧️❄️

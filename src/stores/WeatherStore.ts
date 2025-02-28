@@ -25,7 +25,6 @@ class WeatherStore {
     reaction(
       () => this.favorites.slice(), // Create a copy to track changes
       (favorites) => {
-        console.log("Favorites changed, saving to AsyncStorage:", favorites);
         this.saveFavoritesToStorage();
       }
     );
@@ -80,29 +79,24 @@ class WeatherStore {
   async loadFavoritesFromStorage() {
     try {
       const savedFavorites = await AsyncStorage.getItem("favorites");
-      console.log("Loaded Favorites from AsyncStorage:", savedFavorites);
       
       if (savedFavorites) {
         const favoritesArray = JSON.parse(savedFavorites);
         if (Array.isArray(favoritesArray)) {
           runInAction(() => {
             this.favorites = favoritesArray;
-            console.log("Favorites set to:", this.favorites);
           });
         } else {
           runInAction(() => {
             this.favorites = [];
-            console.log("Favorites reset to empty array because stored data wasn't an array");
           });
         }
       } else {
         runInAction(() => {
           this.favorites = [];
-          console.log("No favorites in storage, using empty array");
         });
       }
     } catch (error) {
-      console.error("Error loading favorites:", error);
       runInAction(() => {
         this.favorites = [];
       });
@@ -117,7 +111,6 @@ class WeatherStore {
         return;
       }
       
-      console.log("Saving Favorites to AsyncStorage:", this.favorites);
       await AsyncStorage.setItem("favorites", JSON.stringify(this.favorites));
     } catch (error) {
       console.error("Error saving favorites:", error);
@@ -126,7 +119,6 @@ class WeatherStore {
 
   // Add location to favorites
   addFavorite(location: { name: string; lat: number; lon: number }) {
-    console.log("Adding Favorite:", location);
     
     // Ensure favorites is an array
     if (!Array.isArray(this.favorites)) {
@@ -140,14 +132,12 @@ class WeatherStore {
     if (!this.favorites.some(fav => fav.name === location.name)) {
       runInAction(() => {
         this.favorites = [location, ...this.favorites];
-        console.log("After adding favorite, favorites are now:", this.favorites);
       });
     }
   }
 
   // Remove location from favorites
   removeFavorite(locationName: string) {
-    console.log("Removing Favorite:", locationName);
     
     // Ensure favorites is an array
     if (!Array.isArray(this.favorites)) {
@@ -160,7 +150,6 @@ class WeatherStore {
     
     runInAction(() => {
       this.favorites = this.favorites.filter(fav => fav.name !== locationName);
-      console.log("After removing favorite, favorites are now:", this.favorites);
     });
   }
 
@@ -168,12 +157,10 @@ class WeatherStore {
   isFavorite(locationName: string) {
     // Ensure favorites is an array
     if (!Array.isArray(this.favorites)) {
-      console.log("Favorites is not an array when checking:", locationName);
       return false;
     }
     
     const result = this.favorites.some(fav => fav.name === locationName);
-    console.log("Is Favorite check for", locationName, ":", result);
     return result;
   }
 

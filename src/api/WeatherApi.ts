@@ -1,9 +1,10 @@
 import axios from "axios";
+import {API_KEY} from '@env'
 
 const apiClient = axios.create({
   baseURL: "https://api.openweathermap.org/data/2.5",
   params: {
-    appid: "15f231a4c5493607e6ad5070b5c388da", 
+    appid: API_KEY, 
     units: "metric",
   },
 });
@@ -37,5 +38,5 @@ export const fetchHourlyWeather = async (latitude: number, longitude: number) =>
       lon: longitude,
     },
   });
-  return response.data.list.slice(0, 8); // Return the next 24 hours (8 x 3-hour intervals)
+  return response.data.list.slice(0, 8);
 };

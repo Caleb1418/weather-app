@@ -1,9 +1,8 @@
-// types/navigation.ts
 import { StackNavigationProp } from "@react-navigation/stack";
 
 export type RootStackParamList = {
   Home: { selectedLocation?: { lat: number; lon: number } };
-  Location: undefined; // Add other screens if needed
+  Location: undefined;
 };
 
 // Define the type for the navigation prop in each screen
